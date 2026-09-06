@@ -24,7 +24,7 @@ Settings live under the `contextPrune` key in `<agent-dir>/settings.json` (i.e. 
     "minBatchChars": 1000,
     "recoveryGraceTurns": 3,
     "protectedTools": [],
-    "protectedPaths": ["**/skills/**/*.md"],
+    "protectedPaths": ["**/skills/**/*.md", "**/gauntlet-overrides.md"],
     "dedupByContentHash": true,
     "autoBudgetThreshold": null,
     "spillThreshold": 65536,
@@ -57,7 +57,7 @@ Settings live under the `contextPrune` key in `<agent-dir>/settings.json` (i.e. 
 | `summarizerIdleTimeoutMs` | non-negative integer (ms), `0` disables | `20000` | Abort a summarizer stream call after this much silence (no stream event). Resets on every event, so it never false-aborts a flowing generation; catches a stalled connection fast. A timeout feeds the same outage-fallback retry as a provider error. `0` = no idle bound. |
 | `summarizerMaxTimeoutMs` | non-negative integer (ms), `0` disables | `180000` | Hard ceiling on total duration of a single summarizer stream call. Backstop for a stream that dribbles forever without going idle. Generous by design (clears the observed p99). `0` = no ceiling. |
 | `protectedTools` | `string[]` | `[]` | Never-pruned tool names (e.g. `["todowrite","todoread"]`). When a protected tool's chain is range-compressed, its output is preserved verbatim inside the `<compressed-chain>` block as `<protected-output>` - protected outputs are never lost. |
-| `protectedPaths` | `string[]` | `["**/skills/**/*.md"]` | Globs matched against a tool call's `args.path`; matching outputs are never pruned (same semantics as `protectedTools`, including `<protected-output>` relocation in compressed chains). Already-summarized matching reads are repaired on the next turn; chain-compressed ones are not. Set `[]` to disable. |
+| `protectedPaths` | `string[]` | `["**/skills/**/*.md", "**/gauntlet-overrides.md"]` | Globs matched against a tool call's `args.path`; matching outputs are never pruned (same semantics as `protectedTools`, including `<protected-output>` relocation in compressed chains). Already-summarized matching reads are repaired on the next turn; chain-compressed ones are not. Set `[]` to disable. |
 | `dedupByContentHash` | `true` / `false` | `true` | Re-reads of identical (toolName, content) skip the LLM and alias the original |
 | `autoBudgetThreshold` | fraction `0`-`1`, or `null` | `null` | Token-budget auto-flush: force a prune when context usage reaches this share of the window, or 300k tokens, whichever comes first - regardless of `pruneOn`. `0.8` = 80%, not `80`. The 300k ceiling only binds on models advertising more than 300k. `null` = off. See [Token-budget auto-flush](#token-budget-auto-flush) |
 | `spillThreshold` | positive integer | `65536` | Minimum chars (`resultText.length`) for a single tool result to be spilled eagerly to a sidecar file at capture time rather than waiting for normal summarization. Non-positive / invalid values fall back to the default; to effectively disable spilling, set it above any result you expect. See [Spilled outputs](#spilled-outputs) |

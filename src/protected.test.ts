@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { globToRegExp, isProtected } from "./protected.js";
+import { DEFAULT_CONFIG } from "./types.js";
 
 describe("globToRegExp", () => {
   test("** crosses path segments", () => {
@@ -30,6 +31,27 @@ describe("globToRegExp", () => {
 
   test("case-sensitive", () => {
     expect(globToRegExp("**/SKILL.md").test("a/skill.md")).toBe(false);
+  });
+});
+
+describe("isProtected defaults", () => {
+  test.each([".pi/gauntlet-overrides.md", "doc/gauntlet-overrides.md"])(
+    "protects reads of %s",
+    (path) => {
+      expect(isProtected("read", { path }, DEFAULT_CONFIG)).toBe(true);
+    },
+  );
+
+  test("protects skill reads", () => {
+    expect(isProtected("read", { path: "/h/skills/x/SKILL.md" }, DEFAULT_CONFIG)).toBe(true);
+  });
+
+  test("does not protect sibling settings reads", () => {
+    expect(isProtected("read", { path: ".pi/settings.json" }, DEFAULT_CONFIG)).toBe(false);
+  });
+
+  test("does not infer paths from bash commands", () => {
+    expect(isProtected("bash", { command: "cat .pi/gauntlet-overrides.md" }, DEFAULT_CONFIG)).toBe(false);
   });
 });
 

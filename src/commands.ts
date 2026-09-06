@@ -256,7 +256,7 @@ function protectedToolsDescription(config: ContextPruneConfig): string {
 }
 
 function protectedPathsDescription(config: ContextPruneConfig): string {
-  return `Glob patterns matched against a tool call's \`args.path\`; matching outputs are NEVER pruned. Currently: ${protectedToolsDisplay(config.protectedPaths)}. Edit via \`/pruner protected-paths\` (interactive) or \`/pruner protected-paths <comma-separated globs>\`. Set to 'none' to disable (kill switch). Default protects skill files: **/skills/**/*.md`;
+  return `Glob patterns matched against a tool call's \`args.path\`; matching outputs are NEVER pruned. Currently: ${protectedToolsDisplay(config.protectedPaths)}. Edit via \`/pruner protected-paths\` (interactive) or \`/pruner protected-paths <comma-separated globs>\`. Set to 'none' to disable (kill switch). Default protects skill files and per-repo gauntlet overrides: **/skills/**/*.md, **/gauntlet-overrides.md`;
 }
 
 const HELP_TEXT = `pruner — automatically summarizes tool-call outputs to keep context lean.

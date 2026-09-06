@@ -35,6 +35,22 @@ async function writeContextPrune(overrides: Record<string, unknown>): Promise<vo
   await writeFile(settingsPath(), JSON.stringify({ contextPrune: overrides }));
 }
 
+describe("loadConfig protectedPaths", () => {
+  it("uses the defaults when unset", async () => {
+    await writeContextPrune({});
+    const config = await loadConfig();
+    expect(config.protectedPaths).toEqual(DEFAULT_CONFIG.protectedPaths);
+  });
+
+  it("replaces defaults with user-supplied paths, including an empty list", async () => {
+    for (const protectedPaths of [["**/custom.md"], []]) {
+      await writeContextPrune({ protectedPaths });
+      const config = await loadConfig();
+      expect(config.protectedPaths).toEqual(protectedPaths);
+    }
+  });
+});
+
 describe("loadConfig recoveryGraceTurns normalization", () => {
   it("preserves an explicit 0", async () => {
     await writeContextPrune({ recoveryGraceTurns: 0 });

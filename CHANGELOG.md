@@ -7,6 +7,10 @@ Published to npm as [`pi-condense`](https://www.npmjs.com/package/pi-condense) (
 Pushing a `vX.Y.Z` tag triggers `.github/workflows/release.yml`, which runs the tests and
 publishes via OIDC trusted publishing. See `.agents/skills/release/SKILL.md`.
 
+## [2.10.2] - 2026-09-06
+
+- Protect `gauntlet-overrides.md` reads by default alongside skill files, including `.pi/` and `doc/` paths, so per-repo harness contracts survive context pruning. User-supplied `protectedPaths` still replaces the defaults; path matching remains limited to `args.path`.
+
 ## [2.10.1] - 2026-09-02
 
 - **Spill sidecar basenames capped at 255 bytes ([#14](https://github.com/jjuraszek/pi-condense/issues/14)).** Providers emitting 300+ char tool-call ids drove `blobPathFor` past the filesystem basename limit: eager spill failed silently (`ENAMETOOLONG` caught, oversized result stayed inline and bloated context) and the deterministic backfill aborted fail-closed. Fitting names stay byte-identical; over-limit names become `<234-byte sanitized prefix>.<16-hex sha1 of the unsanitized occurrence key>.txt` (exactly 255 bytes). The `.` separator is unreachable by `sanitizeId`, so capped names are namespace-disjoint from short-key names by construction - no probe, no migration, persisted `spillPath` read-back unchanged. Spec: `doc/specs/2026-09-02-gh-14-spill-filename-cap.md` (partially supersedes the 2026-06-02 spill spec's filename derivation).
